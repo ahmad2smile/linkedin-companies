@@ -1,17 +1,25 @@
 import "reflect-metadata";
+
 import { createConnection } from "typeorm";
+import { launch } from "puppeteer";
+
+import { getLinksOfCompanies } from "./scrapping/getLinksOfCompanies";
+import { login } from "./scrapping/login";
 import { Company } from "./entity/Company";
 
-import { getCompanyLinks } from "./scrapping/getCompanyLinks";
+const scrape = async () => {
+	const dbConnection = await createConnection();
 
-// createConnection()
-// 	.then(async connection => {
-// 		const company = new Company();
+	const browser = await launch({ headless: true });
+	const page = await browser.newPage();
 
-// 		await connection.manager.save(company);
+	await login(page);
 
-// 		console.log("Here you can setup and run express/koa/any other framework.");
-// 	})
-// 	.catch(error => console.log(error));
+	for await (const companies of getLinksOfCompanies(page)) {
+		await dbConnection.manager.save(companies);
+	}
 
-getCompanyLinks().then(console.log);
+	await browser.close();
+};
+
+scrape();

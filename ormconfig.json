@@ -4,7 +4,7 @@
    "port": 5432,
    "username": "postgres",
    "password": "pass123",
-   "database": "linkedin-companies",
+   "database": "lkcompanies",
    "synchronize": true,
    "logging": false,
    "entities": [

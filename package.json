@@ -7,7 +7,7 @@
       "@types/node": "^8.0.29",
       "@types/puppeteer": "^2.0.1",
       "ts-node": "3.3.0",
-      "typescript": "3.3.3333"
+      "typescript": "3.8.3"
    },
    "dependencies": {
       "cheerio": "^1.0.0-rc.3",

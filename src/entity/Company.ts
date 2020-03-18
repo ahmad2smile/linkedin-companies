@@ -1,43 +1,43 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
-@Entity()
+@Entity({ name: "companies" })
 export class Company {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column()
+	@Column({ nullable: true })
 	name: string;
 
-	@Column()
+	@Column({ nullable: true })
 	followers: number;
 
-	@Column()
+	@Column({ nullable: true })
 	headquarter: string;
 
-	@Column()
+	@Column({ nullable: true })
 	industry: string;
 
-	@Column()
+	@Column({ nullable: true })
 	size: string;
 
-	@Column()
+	@Column({ nullable: true })
 	type: string;
 
-	@Column()
+	@Column({ nullable: true })
 	founded: string;
 
-	@Column()
+	@Column({ nullable: true })
 	specialties: string;
 
-	@Column()
+	@Column({ nullable: true })
 	about: string;
 
-	@Column()
+	@Column({ nullable: true })
 	website: string;
 
-	@Column()
+	@Column({ nullable: true })
 	link: string;
 
-	@Column()
+	@Column({ nullable: true })
 	logo: string;
 }
