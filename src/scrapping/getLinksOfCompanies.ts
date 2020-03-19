@@ -15,10 +15,10 @@ const waitFor = (t: number) =>
 	});
 
 export async function* getLinksOfCompanies(page: Page): any {
+	let pageNumber = progress.linkPage;
+
 	for (let i = progress.linkIndex; i < pageLinks.length; i++) {
 		const pageLink = pageLinks[i];
-
-		let pageNumber = progress.linkPage;
 
 		while (true) {
 			const fullPageLink = `${pageLink}-${pageNumber}`;
@@ -31,6 +31,7 @@ export async function* getLinksOfCompanies(page: Page): any {
 
 			if (!companies.length) {
 				console.log(`Complete page: ${fullPageLink}`);
+				pageNumber = 1;
 
 				break;
 			}
@@ -57,17 +58,10 @@ const extractCompanies = (content: any) => {
 	return companies;
 };
 
+let retires = 0;
+
 const getCompanies = async (page: Page, pageLink: string) => {
 	try {
-		page.on("response", req => {
-			const headers = req.headers();
-			const type = headers && headers["content-type"];
-
-			if (type === "text/html" && req.status() === 404) {
-				throw new PageNotFoundError();
-			}
-		});
-
 		await page.goto(pageLink, {
 			waitUntil: "domcontentloaded",
 			timeout: 60000,
@@ -77,9 +71,13 @@ const getCompanies = async (page: Page, pageLink: string) => {
 
 		const content = await page.content();
 
+		retires = 0;
+
 		return extractCompanies(content);
 	} catch (error) {
-		if (error instanceof PageNotFoundError) {
+		retires++;
+
+		if (retires === 5 || (error.message && error.message.includes("#seo-dir"))) {
 			return [];
 		}
 
@@ -96,7 +94,7 @@ const updateProgress = (i: number, pageNumber: number) => {
 	const newProgress = progress;
 
 	newProgress.linkIndex = i;
-	newProgress.linkPage = pageNumber;
+	newProgress.linkPage = pageNumber + 1;
 
 	writeFile("./src/scrapping/progress.json", JSON.stringify(newProgress, undefined, 4), err => {
 		if (err) {
