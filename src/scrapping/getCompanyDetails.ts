@@ -9,6 +9,8 @@ const COMPANY_ABOUT_SELECTOR = ".break-words";
 const COMPANY_DETAILS_SELECTOR = "dt.org-page-details__definition-term";
 const COMPANY_LOGO_SELECTOR = ".org-top-card-primary-content__logo";
 
+const PLACEHOLDER_LOGO = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
 const waitFor = (t: number) =>
 	new Promise(resolve => {
 		setTimeout(resolve, t);
@@ -35,6 +37,7 @@ const extractCompanyDetails = (content: string) => {
 			.text()
 			.trim()
 			.replace("Company ", "")
+			.replace("headquarters", "headquarter")
 			.toLowerCase();
 
 		company[detailsTitle] = $(el.nextSibling.next)
@@ -42,18 +45,17 @@ const extractCompanyDetails = (content: string) => {
 			.trim();
 	});
 
-	company.logo = $(COMPANY_LOGO_SELECTOR).attr("src");
+	company.logo = $(COMPANY_LOGO_SELECTOR).attr("src") || PLACEHOLDER_LOGO;
 
 	return company;
 };
 
 let retires = 0;
-const PAGE_WAIT_SELECTOR = COMPANY_LOGO_SELECTOR;
+const PAGE_WAIT_SELECTOR = COMPANY_NAME_SELECTOR;
 
 export const getCompanyDetails = async (page: Page, pageLink: string) => {
 	try {
 		await page.goto(`${pageLink}/about`, {
-			waitUntil: "domcontentloaded",
 			timeout: 60000,
 		});
 

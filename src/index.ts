@@ -41,6 +41,9 @@ const scrapeCompaniesDetails = async () => {
 		"SELECT * FROM COMPANIES WHERE LENGTH(name) > 4 AND logo IS NULL",
 	);
 
+	const total = companies.length;
+	let current = 1;
+
 	for (const c of companies) {
 		const company = await getCompanyDetails(page, c.link);
 
@@ -48,14 +51,21 @@ const scrapeCompaniesDetails = async () => {
 			continue;
 		}
 
-		await dbConnection
-			.createQueryBuilder()
-			.update(Company)
-			.set(company)
-			.where("id = :id", { id: c.id })
-			.execute();
+		try {
+			await dbConnection
+				.createQueryBuilder()
+				.update(Company)
+				.set(company)
+				.where("id = :id", { id: c.id })
+				.execute();
+		} catch (error) {
+			console.log(`Error Updating Company: id =${c.id}`);
+		}
 
-		console.log(`Updated Company: ${c.name}`);
+		process.stdout.write("\x1Bc");
+		console.log(`Progress: ${((current / total) * 100).toFixed()}%`);
+
+		current++;
 	}
 
 	await cleanUp();
