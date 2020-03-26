@@ -2,6 +2,7 @@ import { Page } from "puppeteer";
 import * as cheerio from "cheerio";
 
 import { Company } from "../entity/Company";
+import { waitFor } from "../utils/utils";
 
 const COMPANY_NAME_SELECTOR = ".org-top-card-summary__title > span";
 const COMPANY_HEADER_SELECTOR = ".org-top-card-summary-info-list > div.inline-block > div:last-child";
@@ -10,11 +11,6 @@ const COMPANY_DETAILS_SELECTOR = "dt.org-page-details__definition-term";
 const COMPANY_LOGO_SELECTOR = ".org-top-card-primary-content__logo";
 
 const PLACEHOLDER_LOGO = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-
-const waitFor = (t: number) =>
-	new Promise(resolve => {
-		setTimeout(resolve, t);
-	});
 
 const extractCompanyDetails = (content: string) => {
 	const $ = cheerio.load(content);

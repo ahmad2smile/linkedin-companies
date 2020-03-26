@@ -3,16 +3,11 @@ import * as cheerio from "cheerio";
 import { writeFile } from "fs";
 
 import { Company } from "../entity/Company";
-import { PageNotFoundError } from "./errors";
 import { pageLinks } from "./pageLinks";
 import * as progress from "./progress.json";
+import { waitFor } from "../utils/utils";
 
 const COMPANY_LIST_SELECTOR = ".column li a";
-
-const waitFor = (t: number) =>
-	new Promise(resolve => {
-		setTimeout(resolve, t);
-	});
 
 export async function* getLinksOfCompanies(page: Page): any {
 	let pageNumber = progress.linkPage;
