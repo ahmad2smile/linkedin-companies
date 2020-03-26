@@ -52,6 +52,8 @@ const scrapeCompaniesDetails = async () => {
 	let current = 1;
 
 	for (const c of companies) {
+		process.stdout.write("\x1Bc");
+
 		const company = await getCompanyDetails(page, c.link);
 
 		if (company === null) {
@@ -69,7 +71,6 @@ const scrapeCompaniesDetails = async () => {
 			console.log(`Error Updating Company: id =${c.id}`);
 		}
 
-		process.stdout.write("\x1Bc");
 		console.log(`Progress: ${((current / total) * 100).toFixed(4)}%`);
 
 		current++;
