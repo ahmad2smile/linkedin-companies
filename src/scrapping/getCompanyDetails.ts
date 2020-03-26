@@ -3,6 +3,7 @@ import * as cheerio from "cheerio";
 
 import { Company } from "../entity/Company";
 import { waitFor } from "../utils/utils";
+import { gotoCompanyAds } from "./getCompanyDownloadAd";
 
 const COMPANY_NAME_SELECTOR = ".org-top-card-summary__title > span";
 const COMPANY_HEADER_SELECTOR = ".org-top-card-summary-info-list > div.inline-block > div:last-child";
@@ -12,7 +13,7 @@ const COMPANY_LOGO_SELECTOR = ".org-top-card-primary-content__logo";
 
 const PLACEHOLDER_LOGO = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
-const extractCompanyDetails = (content: string) => {
+const extractCompanyDetails = async (page: Page, pageLink: string, content: string) => {
 	const $ = cheerio.load(content);
 
 	const company = new Company();
@@ -43,6 +44,8 @@ const extractCompanyDetails = (content: string) => {
 
 	company.logo = $(COMPANY_LOGO_SELECTOR).attr("src") || PLACEHOLDER_LOGO;
 
+	company.downloadableAds = await gotoCompanyAds(page, pageLink);
+
 	return company;
 };
 
@@ -61,7 +64,7 @@ export const getCompanyDetails = async (page: Page, pageLink: string) => {
 
 		retires = 0;
 
-		return extractCompanyDetails(content);
+		return extractCompanyDetails(page, pageLink, content);
 	} catch (error) {
 		retires++;
 

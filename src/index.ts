@@ -73,7 +73,7 @@ const scrapeCompaniesDetails = async () => {
 		console.log(`Progress: ${((current / total) * 100).toFixed(4)}%`);
 
 		current++;
-		const randomWait = getRandom(5);
+		const randomWait = getRandom(5) * 60 * 1000;
 
 		await waitFor(randomWait);
 	}

@@ -40,4 +40,7 @@ export class Company {
 
 	@Column({ nullable: true })
 	logo: string;
+
+	@Column({ nullable: true, default: false })
+	downloadableAds: boolean;
 }
