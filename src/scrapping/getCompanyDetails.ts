@@ -27,9 +27,9 @@ const extractCompanyDetails = async (page: Page, pageLink: string, content: stri
 		.trim();
 	company.followers = Number(followersStr) ?? 0;
 
-	company.about = $(COMPANY_ABOUT_SELECTOR).text();
+	company.about = $(COMPANY_ABOUT_SELECTOR)?.text();
 
-	$(COMPANY_DETAILS_SELECTOR).each((i, el) => {
+	$(COMPANY_DETAILS_SELECTOR)?.each((i, el) => {
 		const detailsTitle = $(el)
 			.text()
 			.trim()
@@ -42,7 +42,7 @@ const extractCompanyDetails = async (page: Page, pageLink: string, content: stri
 			.trim();
 	});
 
-	company.logo = $(COMPANY_LOGO_SELECTOR).attr("src") || PLACEHOLDER_LOGO;
+	company.logo = $(COMPANY_LOGO_SELECTOR)?.attr("src") || PLACEHOLDER_LOGO;
 
 	company.downloadableAds = await gotoCompanyAds(page, pageLink);
 

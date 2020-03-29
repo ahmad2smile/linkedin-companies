@@ -10,7 +10,7 @@ import { getCompanyDetails } from "./scrapping/getCompanyDetails";
 import { getRandom, waitFor } from "./utils/utils";
 
 const getAuthorizedPage = async () => {
-	const browser = await launch({ headless: true });
+	const browser = await launch({ headless: false });
 	const page = await browser.newPage();
 
 	// Get Random Cookies in Page
@@ -45,6 +45,8 @@ const scrapeCompaniesDetails = async () => {
 
 	const { page, cleanUp } = await getAuthorizedPage();
 
+	page.screenshot({ path: "./after_login.jpg" });
+
 	const companies: Array<Company> = await dbConnection.manager.query(
 		"SELECT * FROM COMPANIES WHERE LENGTH(name) > 3 AND LENGTH(name) < 9 AND logo IS NULL ORDER BY RANDOM()",
 	);
@@ -54,7 +56,7 @@ const scrapeCompaniesDetails = async () => {
 	for (const c of companies) {
 		process.stdout.write("\x1Bc");
 
-		const company = await getCompanyDetails(page, c.link);
+		const company = await getCompanyDetails(page, c.link.replace("?trk=companies_directory", ""));
 
 		if (company === null) {
 			continue;
@@ -75,8 +77,6 @@ const scrapeCompaniesDetails = async () => {
 
 		current++;
 		const randomWait = getRandom(5) * 60 * 1000;
-
-		await waitFor(randomWait);
 	}
 
 	await cleanUp();
