@@ -7,7 +7,8 @@ import { getLinksOfCompanies } from "./scrapping/getLinksOfCompanies";
 import { login } from "./scrapping/login";
 import { Company } from "./entity/Company";
 import { getCompanyDetails } from "./scrapping/getCompanyDetails";
-import { getRandom, waitFor } from "./utils/utils";
+import { getRandom } from "./utils/utils";
+import { logger } from "./utils/logger";
 
 const getAuthorizedPage = async () => {
 	const browser = await launch({ headless: false });
@@ -54,7 +55,7 @@ const scrapeCompaniesDetails = async () => {
 	let current = 1;
 
 	for (const c of companies) {
-		process.stdout.write("\x1Bc");
+		// process.stdout.write("\x1Bc");
 
 		const company = await getCompanyDetails(page, c.link.replace("?trk=companies_directory", ""));
 
@@ -70,13 +71,14 @@ const scrapeCompaniesDetails = async () => {
 				.where("id = :id", { id: c.id })
 				.execute();
 		} catch (error) {
-			console.log(`Error Updating Company: id =${c.id}`);
+			logger.error(JSON.stringify(error));
+
+			logger.error(`Error Updating Company: id =${c.id}`);
 		}
 
-		console.log(`Progress: ${((current / total) * 100).toFixed(4)}%`);
+		logger.info(`Progress: ${((current / total) * 100).toFixed(4)}%`);
 
 		current++;
-		const randomWait = getRandom(5) * 60 * 1000;
 	}
 
 	await cleanUp();

@@ -13,6 +13,8 @@ const COMPANY_LOGO_SELECTOR = ".org-top-card-primary-content__logo";
 
 const PLACEHOLDER_LOGO = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
+const COMPANY_DETAILS = ["headquarter", "industry", "size", "type", "founded", "specialties", "website", "phone"];
+
 const extractCompanyDetails = async (page: Page, pageLink: string, content: string) => {
 	const $ = cheerio.load(content);
 
@@ -30,16 +32,21 @@ const extractCompanyDetails = async (page: Page, pageLink: string, content: stri
 	company.about = $(COMPANY_ABOUT_SELECTOR)?.text();
 
 	$(COMPANY_DETAILS_SELECTOR)?.each((i, el) => {
-		const detailsTitle = $(el)
+		let detailsTitle = $(el)
 			.text()
 			.trim()
 			.replace("Company ", "")
-			.replace("headquarters", "headquarter")
 			.toLowerCase();
 
-		company[detailsTitle] = $(el.nextSibling.next)
-			.text()
-			.trim();
+		if (detailsTitle.includes("headquarters")) {
+			detailsTitle = "headquarter";
+		}
+
+		if (COMPANY_DETAILS.includes(detailsTitle)) {
+			company[detailsTitle] = $(el.nextSibling.next)
+				.text()
+				.trim();
+		}
 	});
 
 	company.logo = $(COMPANY_LOGO_SELECTOR)?.attr("src") || PLACEHOLDER_LOGO;

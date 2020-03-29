@@ -36,6 +36,9 @@ export class Company {
 	website: string;
 
 	@Column({ nullable: true })
+	phone: string;
+
+	@Column({ nullable: true })
 	link: string;
 
 	@Column({ nullable: true })

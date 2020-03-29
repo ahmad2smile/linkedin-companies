@@ -14,7 +14,8 @@
       "pg": "^7.18.2",
       "puppeteer": "^2.1.1",
       "reflect-metadata": "^0.1.10",
-      "typeorm": "0.2.24"
+      "typeorm": "0.2.24",
+      "winston": "^3.2.1"
    },
    "scripts": {
       "start": "ts-node src/index.ts"
