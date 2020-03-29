@@ -55,7 +55,7 @@ const scrapeCompaniesDetails = async () => {
 	let current = 1;
 
 	for (const c of companies) {
-		// process.stdout.write("\x1Bc");
+		process.stdout.write("\x1Bc");
 
 		const company = await getCompanyDetails(page, c.link.replace("?trk=companies_directory", ""));
 

@@ -27,7 +27,11 @@ const extractCompanyDetails = async (page: Page, pageLink: string, content: stri
 		.replace("followers", "")
 		.replace(",", "")
 		.trim();
-	company.followers = Number(followersStr) ?? 0;
+	company.followers = Number(followersStr);
+
+	if (!company.followers) {
+		company.followers = 0;
+	}
 
 	company.about = $(COMPANY_ABOUT_SELECTOR)?.text();
 
