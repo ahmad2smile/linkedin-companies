@@ -7,7 +7,7 @@ import { getLinksOfCompanies } from "./scrapping/getLinksOfCompanies";
 import { login } from "./scrapping/login";
 import { Company } from "./entity/Company";
 import { getCompanyDetails } from "./scrapping/getCompanyDetails";
-import { getRandom } from "./utils/utils";
+import { getRandom, waitFor } from "./utils/utils";
 import { logger } from "./utils/logger";
 
 const getAuthorizedPage = async () => {
@@ -15,15 +15,17 @@ const getAuthorizedPage = async () => {
 	const page = await browser.newPage();
 
 	// Get Random Cookies in Page
-	await page.goto("https://www.google.com/");
-	await page.goto("https://mail.google.com/mail/u/0/");
-	await page.goto("https://www.youtube.com/");
+	await page.goto("https://www.google.com/", { waitUntil: "load" });
+	await page.goto("https://mail.google.com/mail/u/0/", { waitUntil: "load" });
+	await page.goto("https://www.youtube.com/", { waitUntil: "load" });
 
 	await login(page);
 
+	await waitFor(5 * 60 * 1000); // 5 min security check
+
 	return {
 		page,
-		cleanUp: browser.close,
+		cleanUp: () => browser.close(),
 	};
 };
 
@@ -39,19 +41,16 @@ const scrape = async () => {
 	await cleanUp();
 };
 
-const total = 269005;
-
 const scrapeCompaniesDetails = async () => {
 	const dbConnection = await createConnection();
 
 	const { page, cleanUp } = await getAuthorizedPage();
 
-	page.screenshot({ path: "./after_login.jpg" });
-
 	const companies: Array<Company> = await dbConnection.manager.query(
-		"SELECT * FROM COMPANIES WHERE LENGTH(name) > 3 AND LENGTH(name) < 9 AND logo IS NULL ORDER BY RANDOM()",
+		"SELECT * FROM COMPANIES WHERE LENGTH(name) > 3 AND LENGTH(name) < 9 AND logo IS NULL ORDER BY RANDOM() LIMIT 300", // Limit requests per session
 	);
 
+	const total = companies.length;
 	let current = 1;
 
 	for (const c of companies) {
@@ -79,6 +78,10 @@ const scrapeCompaniesDetails = async () => {
 		logger.info(`Progress: ${((current / total) * 100).toFixed(4)}%`);
 
 		current++;
+
+		const randomTime = getRandom(2) * 1000 * 60;
+
+		await waitFor(randomTime);
 	}
 
 	await cleanUp();
