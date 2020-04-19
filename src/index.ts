@@ -21,7 +21,7 @@ const getAuthorizedPage = async () => {
 
 	await login(page);
 
-	await waitFor(5 * 60 * 1000); // 5 min security check
+	await waitFor(1 * 60 * 1000); // 5 min security check
 
 	return {
 		page,
@@ -79,7 +79,7 @@ const scrapeCompaniesDetails = async () => {
 
 		current++;
 
-		const randomTime = getRandom(2) * 1000 * 60;
+		const randomTime = getRandom(1000) * 60;
 
 		await waitFor(randomTime);
 	}
