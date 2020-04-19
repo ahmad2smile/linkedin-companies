@@ -6,6 +6,7 @@ const AD_SELECTOR = ".org-transparency-update__container";
 const NO_AD_SELECTOR = ".org-feed-empty-sponsored-updates";
 
 const CONDITION_ELEMENTS = ["ebook", "e-book", "whitepaper", "herunterladen", "download"];
+const NEGATIVE_CONDITION_ELEMENTS = ["facebook"];
 
 const isDownloadableAds = (content: string) => {
 	const $ = cheerio.load(content);
@@ -14,7 +15,10 @@ const isDownloadableAds = (content: string) => {
 
 	const adString = (adHtml || "").toLowerCase();
 
-	return CONDITION_ELEMENTS.some(e => adString.includes(e));
+	return (
+		!NEGATIVE_CONDITION_ELEMENTS.some((e) => adString.includes(e)) &&
+		CONDITION_ELEMENTS.some((e) => adString.includes(e))
+	);
 };
 
 let retires = 0;
